@@ -53,9 +53,9 @@ function Cell(size){
         ellipse(this.pos.x, this.pos.y, this.size, this.size);       
     }
 
-    this.collision = function(cell1, cell2){
+    // this.collision = function(cell1, cell2){
 
-        if(cell1.pos.x+size < cell2.pos.x + size || cell1. )
-        return true;
-    }
+    //     if(cell1.pos.x < cell2.pos.x + size && cell1.pos.y < cell2.y )
+    //     return true;
+    // }
 }
