@@ -13,6 +13,13 @@ function draw() {
         cell[i].move();
         cell[i].show();
         cell[i].border();
+
+        for (var j = 0; j < cell.length; j++) {
+            if(cell[i].collision(cell[j])){
+                cell[i].vel = createVector(0,0);
+                cell[i].acc = createVector(0,0);
+            }
+        }
     }
 }
 
@@ -53,9 +60,22 @@ function Cell(size){
         ellipse(this.pos.x, this.pos.y, this.size, this.size);       
     }
 
-    // this.collision = function(cell1, cell2){
+    this.collision = function(cell2){
 
-    //     if(cell1.pos.x < cell2.pos.x + size && cell1.pos.y < cell2.y )
-    //     return true;
-    // }
+        let x;
+        let y;
+
+        if(this.pos.y > cell2.pos.y && this.pos.y+size < cell2.y){
+            y = true;
+        }
+
+        if(this.pos.x > cell2.pos.x && this.pos.x+size < cell2.x){
+            x = true;
+        }
+
+        if(x&&y)
+            return true;
+        else
+            return false;
+    }
 }
