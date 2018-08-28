@@ -1,23 +1,31 @@
 var cell = [];
+var mouse;
 
 function setup() {
     createCanvas(displayWidth-20, displayHeight-20);
-    for (var i=0; i < 20; i++) {
+    for (var i=0; i < 2; i++) {
         append(cell,new Cell(random(30,50)));
     }
+    mouse = new Cell(50);
 }
 
 function draw() {
     background(0,50);
+
+    mouse.pos = createVector(mouseX, mouseY);
+    mouse.show();
+
     for (var i=0; i < cell.length; i++) {
         cell[i].move();
         cell[i].show();
         cell[i].border();
+        if(cell[i].collision(mouse)){
+            background(255);
+        }
 
         for (var j = 0; j < cell.length; j++) {
             if(cell[i].collision(cell[j])){
-                cell[i].vel = createVector(0,0);
-                cell[i].acc = createVector(0,0);
+                
             }
         }
     }
@@ -58,24 +66,23 @@ function Cell(size){
         noStroke();
         fill(this.col);
         ellipse(this.pos.x, this.pos.y, this.size, this.size);       
+
+        fill(255);
+        stroke(255);
+        strokeWeight(5);
+        point(this.pos.x, this.pos.y);
     }
+
+    
 
     this.collision = function(cell2){
 
         let x;
         let y;
 
-        if(this.pos.y > cell2.pos.y && this.pos.y+size < cell2.y){
-            y = true;
+        if (cell2.pos.x > this.pos.x-this.size && cell2.pos.x < this.pos.x+this.size && cell2.pos.y > this.pos.y-this.size && cell2.pos.y < this.pos.y+size){
+            return true
         }
-
-        if(this.pos.x > cell2.pos.x && this.pos.x+size < cell2.x){
-            x = true;
-        }
-
-        if(x&&y)
-            return true;
-        else
-            return false;
+        return false;
     }
 }
