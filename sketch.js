@@ -1,31 +1,43 @@
-var cell = [];
-var mouse;
+var popR = [];
+var popG = [];
+var popB = [];
+// var mouse;
 
 function setup() {
     createCanvas(displayWidth-20, displayHeight-20);
-    for (var i=0; i < 2; i++) {
-        append(cell,new Cell(random(30,50)));
+    for (var i=0; i < 4; i++) {
+        append(popR,new Cell(random(30,50),1,0,0));
+        append(popG,new Cell(random(30,50),0,1,0));
+        append(popB,new Cell(random(30,50),0,0,1));
     }
-    mouse = new Cell(50);
+    // mouse = new Cell(50);
 }
 
 function draw() {
     background(0,50);
 
-    mouse.pos = createVector(mouseX, mouseY);
-    mouse.show();
+    renderPop(popR);
+    renderPop(popG);
+    renderPop(popB);
 
-    for (var i=0; i < cell.length; i++) {
-        cell[i].move();
-        cell[i].show();
-        cell[i].border();
-        if(cell[i].collision(mouse)){
-            background(255);
-        }
+    collisionPop(popR, popB);
+    collisionPop(popR, popG);
+    collisionPop(popG, popB);
+}
 
-        for (var j = 0; j < cell.length; j++) {
-            if(cell[i].collision(cell[j])){
-                
+function renderPop(population){
+    for (var i=0; i < population.length; i++) {
+        population[i].move();
+        population[i].show();
+        population[i].border();
+    }
+}
+
+function collisionPop(population, population1){
+    for (var i = 0; i < population.length; i++) {
+        for (var j = 0; j < population.length; j++) {
+            if(population[i].collision(population1[j])){
+                reduce(population[i], population1[j])
             }
         }
     }
@@ -38,14 +50,27 @@ function mousePressed() {
     }
 }
 
-function Cell(size){
+function reduce(cell, cell1){
+    var difference = cell.size - cell1.size;
+    difference = difference <0 ? (difference/10)*-1 : (difference/10);
+
+    if (cell.size > cell1.size){
+        cell1.size -= difference;
+        cell.size += difference;
+    }else{
+        cell.size -= difference;
+        cell1.size += difference;
+    }
+}
+
+function Cell(size, r, g, b){
 
     this.size = size;
     this.pos = createVector(random(width), random(height));
     this.vel = createVector(0,0);
     this.acc = createVector(random(2),random(2));
 
-    this.col = color(random(255),random(255), random(255));
+    this.col = color(random(80,255)*r,random(80,255)*g, random(80,255)*b);
 
     this.move = function(){
         this.pos.add(this.vel);
@@ -72,8 +97,6 @@ function Cell(size){
         strokeWeight(5);
         point(this.pos.x, this.pos.y);
     }
-
-    
 
     this.collision = function(cell2){
 
