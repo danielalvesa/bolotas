@@ -1,11 +1,20 @@
-function slide(color, title, topics){
+function Slide(_t, _topic){
+	this.tex = _t;
+	this.topic = _topic;
 
-    this.colorSlide = color(255,0,0);
-    this.title = title;
-    this.topics = topics;
+	this.show = function(){
+		fill(255);
+		noStroke();
+		this.setFont(1);
+		text(this.tex, col, row);
+		this.setFont(0.5);
+		text(this.topic, col*2, row*3);
+	}
 
-    this.show = function(){
-        fill(this.colorSlide);
-
-    };
+	this.setFont = function(multiplier){
+		textFont('Roboto');
+		multiplier = multiplier <= 0 ? 1 : multiplier;
+		textSize(row*multiplier);
+		textAlign(LEFT, TOP);
+	}
 }
