@@ -97,7 +97,6 @@ function collisionPop(population, population1){
                     population.splice(i, 1);
                     break;
                 }
-
             }
         }
     }
@@ -114,16 +113,16 @@ function keyPressed(){
     if(keyCode==RIGHT_ARROW){
         if(slides.index<slides.slides.length-1){
             slides.index++;
-            populate(popR, 4, 'red');
-            populate(popG, 4, 'green');
-            populate(popB, 4, 'blue');
+            populate(popR, 4*slides.index, 'red');
+            populate(popG, 4*slides.index, 'green');
+            populate(popB, 4*slides.index, 'blue');
 
         }
     }else if(keyCode==LEFT_ARROW&&slides.index>0) {
         slides.index--;
-        populate(popR, 4, 'red');
-        populate(popG, 4, 'green');
-        populate(popB, 4, 'blue');
+        populate(popR, 4*slides.index, 'red');
+        populate(popG, 4*slides.index, 'green');
+        populate(popB, 4*slides.index, 'blue');
 
     }
 }
@@ -143,6 +142,8 @@ function reduce(cell, cell1){
 }
 
 function Cell(size, col){
+
+
 
     this.size = size;
     this.pos = createVector(random(100,width-100), random(100, height-100));
