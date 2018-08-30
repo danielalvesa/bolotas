@@ -14,11 +14,14 @@ function setup() {
     col = width/12;
     row = height/12;
 
-    for (var i=0; i < 4; i++) {
-        append(popR,new Cell(random(30,50),'red'));
-        append(popG,new Cell(random(30,50),'green'));
-        append(popB,new Cell(random(30,50),'blue'));
-    }
+    // for (var i=0; i < 4; i++) {
+    //     append(popR,new Cell(random(30,50),'red'));
+    //     append(popG,new Cell(random(30,50),'green'));
+    //     append(popB,new Cell(random(30,50),'blue'));
+    // }
+    populate(popR, 4, 'red');
+    populate(popG, 4, 'green');
+    populate(popB, 4, 'blue');
 
     slides = new Slides();
     slides.set();    
@@ -54,6 +57,16 @@ function getWinner() {
         return b;
     }
 }
+
+function populate(population, quantity, color){
+
+    realquant = quantity - population.length;
+
+    for (var i=0; i < realquant; i++) {
+        append(population,new Cell(random(30,50),color));
+    }
+}
+
 
 function showPopulation(){
     renderPop(popR);
@@ -101,16 +114,24 @@ function keyPressed(){
     if(keyCode==RIGHT_ARROW){
         if(slides.index<slides.slides.length-1){
             slides.index++;
+            populate(popR, 4, 'red');
+            populate(popG, 4, 'green');
+            populate(popB, 4, 'blue');
+
         }
     }else if(keyCode==LEFT_ARROW&&slides.index>0) {
         slides.index--;
+        populate(popR, 4, 'red');
+        populate(popG, 4, 'green');
+        populate(popB, 4, 'blue');
+
     }
 }
 
 function reduce(cell, cell1){
 
     var difference = cell.size - cell1.size;
-    difference = difference <0 ? (difference/10)*-1 : (difference/10);
+    difference = difference <0 ? (difference/5)*-1 : (difference/5);
 
     if (cell.size > cell1.size){
         cell.size += difference;
@@ -126,7 +147,7 @@ function Cell(size, col){
     this.size = size;
     this.pos = createVector(random(100,width-100), random(100, height-100));
     this.vel = createVector(0,0);
-    this.acc = createVector(random(-2,2),random(-2,2));
+    this.acc = createVector(random(-1,1),random(-1,1));
 
     switch (col){
         case 'red':
@@ -152,7 +173,7 @@ function Cell(size, col){
 
     this.move = function(){
         this.pos.add(this.vel);
-        if(this.vel.mag()<10){
+        if(this.vel.mag()<random(3,5)){
             this.vel.add(this.acc);
         }
     };
