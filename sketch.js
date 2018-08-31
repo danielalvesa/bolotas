@@ -83,7 +83,9 @@ function showPopulation(){
 
 function renderPop(population){
     for (var i=0; i < population.length; i++) {
-        population[i].move();
+        if(slides.index!=0&&slides.index!=slides.slides.lenght){
+            population[i].move();
+        }
         population[i].show();
         population[i].border();
     }
