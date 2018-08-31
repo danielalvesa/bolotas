@@ -14,22 +14,19 @@ function setup() {
     col = width/12;
     row = height/12;
 
-    // for (var i=0; i < 4; i++) {
-    //     append(popR,new Cell(random(30,50),'red'));
-    //     append(popG,new Cell(random(30,50),'green'));
-    //     append(popB,new Cell(random(30,50),'blue'));
-    // }
     populate(popR, 4, 'red');
     populate(popG, 4, 'green');
     populate(popB, 4, 'blue');
 
     slides = new Slides();
-    slides.set();    
+    slides.set();
+    frameRate(30);
 }
 
 function draw() {
     setBackground();
     showPopulation();
+    
     slides.show();
 }
 
@@ -44,10 +41,7 @@ function setBackground() {
     var r = (popR.length/4)*255;
     var g = (popG.length/4)*255;
     var b = (popB.length/4)*255;
-
-    //console.log(r +" "+ g +" "+ b);
-
-    background(r,g,b, 80);
+    background(r,g,b);
 }
 
 function getWinner() {
