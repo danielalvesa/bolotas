@@ -31,7 +31,7 @@ class Population {
   // Fill our fitness array with a value for every member of the population
   calcFitness() {
     for (let i = 0; i < this.population.length; i++) {
-      this.population[i].calcFitness(target);
+      this.population[i].calcFitness(this.target);
     }
   }
 
@@ -68,9 +68,11 @@ class Population {
       let b = floor(random(this.matingPool.length));
       let partnerA = this.matingPool[a];
       let partnerB = this.matingPool[b];
-      let child = partnerA.crossover(partnerB);
-      child.mutate(this.mutationRate);
-      this.population[i] = child;
+      if(partnerA){
+        let child = partnerA.crossover(partnerB);
+        child.mutate(this.mutationRate);
+        this.population[i] = child;
+      }
     }
     this.generations++;
   }
@@ -94,6 +96,7 @@ class Population {
     this.best = this.population[index].getPhrase();
     if (worldrecord === this.perfectScore) {
       this.finished = true;
+      console.log("foi")
     }
   }
 

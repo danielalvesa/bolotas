@@ -33,6 +33,12 @@ function draw() {
     slides.show();
 }
 
+function showText(pop){
+    for (var i = pop.length - 1; i >= 0; i--) {
+        pop[i].showBest();
+    }
+}
+
 function setBackground() {
     
     var r = (popR.length/4)*255;
@@ -63,19 +69,22 @@ function populate(population, quantity, color){
     realquant = quantity - population.length;
 
     for (var i=0; i < realquant; i++) {
-        append(population,new Cell(random(30,50),color));
+        append(population,new Cell(random(30,35),color));
     }
 }
 
-
 function showPopulation(){
-    renderPop(popR);
-    renderPop(popG);
-    renderPop(popB);
-
     collisionPop(popR, popB);
     collisionPop(popR, popG);
     collisionPop(popG, popB);
+
+    collisionPop(popR, popR);
+    collisionPop(popG, popG);
+    collisionPop(popB, popB);
+
+    renderPop(popR);
+    renderPop(popG);
+    renderPop(popB);
 }
 
 function renderPop(population){
@@ -89,13 +98,15 @@ function renderPop(population){
 function collisionPop(population, population1){
     for (var i = population.length-1; i>=0; i--) {
         for (var j = population1.length-1; j>=0; j--) {
-            if(population[i].collision(population1[j])){
-                if (reduce(population[i], population1[j])){
-                    population1.splice(j, 1);
-                    break;
-                }else{
-                    population.splice(i, 1);
-                    break;
+            if(population[i]!=population1[j]){
+                if(population[i].collision(population1[j])){
+                    if (reduce(population[i], population1[j])){
+                        population1.splice(j, 1);
+                        break;
+                    }else{
+                        population.splice(i, 1);
+                        break;
+                    }
                 }
             }
         }
@@ -113,42 +124,46 @@ function keyPressed(){
     if(keyCode==RIGHT_ARROW){
         if(slides.index<slides.slides.length-1){
             slides.index++;
-            populate(popR, 4*slides.index, 'red');
-            populate(popG, 4*slides.index, 'green');
-            populate(popB, 4*slides.index, 'blue');
+            populate(popR, 2*slides.index, 'red');
+            populate(popG, 2*slides.index, 'green');
+            populate(popB, 2*slides.index, 'blue');
 
         }
     }else if(keyCode==LEFT_ARROW&&slides.index>0) {
         slides.index--;
-        populate(popR, 4*slides.index, 'red');
-        populate(popG, 4*slides.index, 'green');
-        populate(popB, 4*slides.index, 'blue');
-
+        populate(popR, 2*slides.index, 'red');
+        populate(popG, 2*slides.index, 'green');
+        populate(popB, 2*slides.index, 'blue');
     }
 }
 
 function reduce(cell, cell1){
 
     var difference = cell.size - cell1.size;
-    difference = difference <0 ? (difference/5)*-1 : (difference/5);
+    difference = difference <0 ? (difference/10)*-1 : (difference/10);
 
     if (cell.size > cell1.size){
         cell.size += difference;
+        cell.population.populate(cell1.population.population.population.length);
+        cell.acc = createVector(random(-1,1),random(-1,1));
         return true;
     }else{
         cell1.size += difference;
+        cell1.population.populate(cell.population.population.population.length);
+        cell1.acc = createVector(random(-1,1),random(-1,1));
         return false;
     }
 }
 
-function Cell(size, col){
-
-
-
+function Cell(size, col, pop){
+    
     this.size = size;
     this.pos = createVector(random(100,width-100), random(100, height-100));
     this.vel = createVector(0,0);
     this.acc = createVector(random(-1,1),random(-1,1));
+
+    this.population = new PopulationManager(5);
+    this.population.startPopulation();
 
     switch (col){
         case 'red':
@@ -173,11 +188,13 @@ function Cell(size, col){
     this.col = color(random(80,255)*r,random(80,255)*g, random(80,255)*b);
 
     this.move = function(){
-        this.pos.add(this.vel);
-        if(this.vel.mag()<random(3,5)){
+        if(this.population.evaluate){
+            this.pos.add(this.vel);
             this.vel.add(this.acc);
         }
-    };
+        this.vel.setMag(5)
+        this.acc = createVector(random(-1,1),random(-1,1));
+    }
 
     this.border = function(){
         if(this.pos.x<size/2||this.pos.x>width-size/2){
@@ -185,21 +202,34 @@ function Cell(size, col){
         }else if(this.pos.y<size/2||this.pos.y>height-size/2){
             this.vel.y*=-1;
         }
-    };
+    }
 
     this.show = function(){
         noStroke();
         fill(this.col);
-        ellipse(this.pos.x, this.pos.y, this.size, this.size);       
+        ellipse(this.pos.x, this.pos.y, this.size, this.size);
+        this.population.generate();
+        this.showBest();
     }
 
     this.collision = function(cell2){
-        let x;
-        let y;
+        if(this.population.evaluate){
+            let x;
+            let y;
 
-        if (cell2.pos.x > this.pos.x-this.size && cell2.pos.x < this.pos.x+this.size && cell2.pos.y > this.pos.y-this.size && cell2.pos.y < this.pos.y+size){
-            return true
+            if (cell2.pos.x > this.pos.x-this.size && cell2.pos.x < this.pos.x+this.size && cell2.pos.y > this.pos.y-this.size && cell2.pos.y < this.pos.y+size){
+                return true
+            }
+            return false;
         }
-        return false;
+    }
+
+    this.showBest = function(){
+        textFont('Roboto');
+        textSize(14);
+        textAlign(CENTER, TOP);
+        fill(200);
+        noStroke();
+        text(this.population.population.best,this.pos.x, this.pos.y + this.size);
     }
 }
